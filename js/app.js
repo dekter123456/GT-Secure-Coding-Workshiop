@@ -2,7 +2,7 @@
  * js/app.js — window.App (v2 contract)
  *
  * Routing, rendering, wiring and persistence for the Secure Coding Workshop.
- * Owns its own markup and emits ONLY the class names from
+ * Owns its own markup and emits ONLY the class names from ARCHITECTURE.md §16.
  *
  * Hard rules honoured here:
  *   - Zero dependencies, no ES modules, no build, works from file://.
@@ -374,7 +374,7 @@
     b.type = 'button';
     b.style.justifyContent = 'flex-start';
     b.setAttribute('data-view', view);
-    b.textContent = (ico ? ico + ' ' : '') + label;
+    b.textContent = (ico ? ico + '  ' : '') + label;
     if (state.route.view === view) {
       b.classList.add('is-active');
       b.style.borderColor = 'var(--accent)';
@@ -992,7 +992,6 @@
     'sensitive-logging': { th: 'ช่องโหว่ที่ระบบบันทึกข้อมูลอ่อนไหวลง log เช่น password, token, Authorization header หรือเลขบัตร ทำให้คนหรือระบบที่เข้าถึง log ได้สามารถนำข้อมูลเหล่านี้ไปใช้ต่อได้', en: 'Passwords, card numbers or tokens get written into the logs, then flow onward to the log aggregator, monitoring and backups — and sit there for the full retention period.' },
     'csrf': { th: 'ช่องโหว่ที่เว็บของ attacker ทำให้ browser ของเหยื่อส่ง request มายังระบบของเราโดยที่ผู้ใช้ไม่ได้ตั้งใจ และ browser แนบ session cookie ให้อัตโนมัติ ระบบจึงอาจเข้าใจผิดว่า request นั้นมาจากผู้ใช้จริง', en: 'An attacker page makes the victim browser send a request to your system. The browser attaches the session cookie automatically, so the server believes the victim did it — when they only opened a page.' },
     'rate-limit': { th: 'ช่องโหว่ที่ endpoint ล็อกอินไม่จำกัดจำนวนครั้ง ทำให้ attacker เดา password ซ้ำได้ต่อเนื่อง หรือใช้ username/password ที่รั่วจากระบบอื่นมาลองกับบัญชีจำนวนมากได้', en: 'The login endpoint has no attempt limit, so an attacker can guess passwords indefinitely, or replay credentials leaked elsewhere across tens of thousands of accounts.' },
-    'open-redirect': { th: 'ช่องโหว่ที่ระบบ redirect ผู้ใช้ไปยัง URL ที่รับมาจาก parameter โดยไม่ตรวจปลายทาง attacker จึงสร้างลิงก์ที่เริ่มจากโดเมนที่น่าเชื่อถือ แล้วพาผู้ใช้ไปยังหน้า phishing ของตนได้', en: 'The app redirects to a URL taken from a parameter without checking it, so a phishing link can start on your trusted domain before bouncing to the attacker fake page.' }
   };
 
 
@@ -2069,7 +2068,6 @@
       items: [
         { th: 'กัน CSRF ด้วย anti-CSRF token และ SameSite cookie สำหรับทุก request ที่เปลี่ยน state', en: 'Protect state-changing requests with anti-CSRF tokens and SameSite cookies.' },
         { th: 'จำกัดอัตราการ login และล็อก/หน่วงแบบ exponential backoff กัน brute force', en: 'Rate-limit logins and apply lockout / exponential backoff against brute force.' },
-        { th: 'ตรวจ redirect ปลายทางด้วย allowlist หรืออนุญาตเฉพาะ path สัมพัทธ์ กัน open redirect (รวม //evil และ /\\evil)', en: 'Validate redirect targets with an allowlist or allow relative paths only (block //evil and /\\evil) to stop open redirects.' },
         { th: 'ออก session id ใหม่หลัง login และตั้งอายุ/หมดเวลาให้เหมาะสม', en: 'Rotate the session id after login and set sensible expiry/idle timeouts.' },
         { th: 'รัน SAST/SCA ใน CI และบล็อก merge เมื่อพบช่องโหว่ระดับสูง', en: 'Run SAST/SCA in CI and block merges on high-severity findings.' }
       ]

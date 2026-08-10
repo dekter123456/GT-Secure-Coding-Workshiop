@@ -93,8 +93,8 @@
       en: 'Welcome to the Secure Coding Workshop'
     },
     'dash.lead': {
-      th: 'เรียนจากช่องโหว่จริง 16 ข้อ อ้างอิงมาตรฐาน OWASP Top 10 (2021) และ CWE',
-      en: '16 real vulnerabilities, mapped to OWASP Top 10 (2021) and CWE.'
+      th: 'เรียนจากช่องโหว่จริง 15 ข้อ อ้างอิงมาตรฐาน OWASP Top 10 (2021) และ CWE',
+      en: '15 real vulnerabilities, mapped to OWASP Top 10 (2021) and CWE.'
     },
     'dash.continue': {
       th: 'ทำต่อจากที่ค้างไว้',

@@ -2,7 +2,7 @@
  * js/app.js — window.App (v2 contract)
  *
  * Routing, rendering, wiring and persistence for the Secure Coding Workshop.
- * Owns its own markup and emits ONLY the class names from ARCHITECTURE.md §16.
+ * Owns its own markup and emits only the documented class names.
  *
  * Hard rules honoured here:
  *   - Zero dependencies, no ES modules, no build, works from file://.
@@ -1602,12 +1602,9 @@
     for (n in relevant) { if (relevant[n]) { anyRelevant = true; break; } }
     if (!anyRelevant) return '';
 
-    // แสดงเฉพาะรอบ ๆ จุดที่เกี่ยวข้อง ไม่ใช่ทุกจุดที่ diff ต่างกัน
+    // แสดงทุกบรรทัด เพื่อให้เห็นบริบทเต็มว่าโค้ดที่แก้แล้วหน้าตาเป็นอย่างไร
     var keep = {};
-    for (n = 0; n < rows.length; n++) {
-      if (!relevant[n]) continue;
-      for (i = Math.max(0, n - DIFF_CTX); i <= Math.min(rows.length - 1, n + DIFF_CTX); i++) keep[i] = true;
-    }
+    for (n = 0; n < rows.length; n++) keep[n] = true;
 
     var H = global.Highlighter;
     var hl = H ? function (x) { return H.highlight(x, langData.lang || 'generic'); } : esc;

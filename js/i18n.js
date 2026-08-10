@@ -3,7 +3,7 @@
  * UI string table + language state for the Secure Coding Workshop.
  * Thai (th) is the primary language, English (en) the secondary.
  * Zero dependencies. Works from file:// and under require() in Node.
- * See,, and docs/I18N_KEYS.md.
+ * Every learner-facing string is a { th, en } pair.
  */
 (function (global) {
   'use strict';

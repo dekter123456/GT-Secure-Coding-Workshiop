@@ -2,7 +2,7 @@
  * js/data/w1.js — Workshop 1: Injection & การตรวจสอบ Input
  *
  * 4 โจทย์: sql-injection, xss, command-injection, path-traversal
- * โครงสร้างตาม docs/ARCHITECTURE.md §4 (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
+ * โครงสร้างข้อมูลของโจทย์ (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
  *
  * หมายเหตุสำหรับผู้ดูแลไฟล์นี้:
  * - โค้ดตัวอย่างอยู่ใน template literal ดังนั้น backtick, ${ และ backslash
@@ -1403,52 +1403,7 @@ module.exports = { makeThumbnail };`,
       }
     },
 
-    pitfalls: [
-      {
-        title: {
-          th: 'บล็อกทุก request ที่มี ../',
-          en: '"I reject any request containing ../"'
-        },
-        why: {
-          th: 'คุณกำลังตรวจสตริง ไม่ได้ตรวจ path จริง ทางหลบมีเยอะมาก: (1) URL-encoded..%2f..%2f หรือ double-encoded..%252f ซึ่งจะถูกถอดรหัสหลังตัวกรองของคุณทำงานไปแล้ว (2) path แบบ absolute อย่าง /etc/passwd ที่ไม่มี../ เลยสักตัว แต่ทำให้ resolve/join ทิ้ง base directory ไปทั้งหมด (3)....// ซึ่งพอตัด../ ตรงกลางออกครั้งเดียวจะเหลือ../ พอดี (4) บน Windows ใช้..\\ ได้ และ (5) symlink ในโฟลเดอร์ที่ผู้ใช้อัปโหลดได้ ซึ่งชี้ออกนอก base โดยไม่มี../ ปรากฏใน request เลย ทางแก้คือ resolve + normalize แล้วค่อยตรวจว่า path สุดท้ายอยู่ใต้ base จริงไหม',
-          en: 'You are checking a string, not the real path, and there are many ways around it: (1) URL-encoded ..%2f..%2f or double-encoded ..%252f, decoded after your filter runs; (2) an absolute path like /etc/passwd, which contains no ../ at all yet makes resolve/join discard the base directory entirely; (3) ....// — strip the inner ../ once and you are left with a working ../; (4) ..\\ on Windows; and (5) a symlink inside a user-writable directory that points outside the base without any ../ appearing in the request. The fix is to resolve and normalize, then check that the final path really is under the base.'
-        },
-        short: {
-          th: 'คุณตรวจสตริงไม่ใช่ path จริง — encode ซ้อน absolute และ symlink หลบได้',
-          en: 'You check a string, not the real path; encoding, absolute paths and symlinks bypass it.'
-        }
-      },
-      {
-        title: {
-          th: 'ตรวจนามสกุลไฟล์ว่าเป็น .pdf',
-          en: '"I check that the extension is .pdf"'
-        },
-        why: {
-          th: 'นามสกุลบอกว่าไฟล์ "ชนิดไหน" ไม่ได้บอกว่าไฟล์ "อยู่ที่ไหน"../../../../srv/other-tenant/invoice.pdf ผ่านการตรวจนามสกุลทุกข้อ แต่เป็นไฟล์ของลูกค้ารายอื่น เช่นเดียวกับ../../backups/dump.pdf ที่อาจเป็น dump ของ database การตรวจนามสกุลมีประโยชน์ในแง่อื่น (กันการ serve ไฟล์ชนิดที่ไม่ต้องการ) แต่ไม่ใช่การคุมขอบเขตโฟลเดอร์ ต้องมีการตรวจ containment แยกต่างหากเสมอ',
-          en: 'An extension tells you what kind of file it is, not where it lives. ../../../../srv/other-tenant/invoice.pdf passes every extension check and is another customer\'s document; so does ../../backups/dump.pdf, which might be a database dump. Extension checks are useful for other reasons (not serving unwanted file types) but they are not directory confinement — you always need a separate containment check.'
-        },
-        short: {
-          th: 'นามสกุลบอกชนิดไฟล์ ไม่ได้บอกว่าไฟล์อยู่ที่ไหน — ต้องตรวจ containment',
-          en: 'An extension says what a file is, not where it lives; you still need a containment check.'
-        }
-      },
-      {
-        title: {
-          th: 'เรียก startsWith(BASE)',
-          en: '"I call startsWith(BASE), that should do it"'
-        },
-        why: {
-          th: 'ถูกทาง แต่ต้องระวังสองจุด: (1) ถ้ายังไม่ normalize ก่อน สตริง /srv/app/user-files/../../etc/passwd จะผ่าน startsWith(BASE) ได้สบาย ๆ ทั้งที่ชี้ไปที่ /etc/passwd (2) การเทียบสตริงเปล่า ๆ ทำให้ /srv/app/user-files-evil/secret ผ่านด้วย เพราะมันขึ้นต้นด้วย /srv/app/user-files จริง ๆ ให้เทียบกับ BASE + ตัวคั่น (path.sep / File.separator) หรือใช้ Path.startsWith ของ Java ซึ่งเทียบทีละ component ไม่ใช่ทีละตัวอักษร',
-          en: 'Right direction, two traps. (1) Without normalizing first, the string /srv/app/user-files/../../etc/passwd sails through startsWith(BASE) while pointing at /etc/passwd. (2) A raw string comparison also admits /srv/app/user-files-evil/secret, because it genuinely does start with /srv/app/user-files. Compare against BASE plus the separator (path.sep / File.separator), or use Java\'s Path.startsWith, which compares path components rather than characters.'
-        },
-        short: {
-          th: 'ต้อง normalize ก่อน และเทียบกับ BASE + ตัวคั่น ไม่ใช่สตริงเปล่า',
-          en: 'Normalize first, and compare against BASE + separator, not a bare string.'
-        }
-      }
-    ],
-
-    languages: {
+languages: {
       java: {
         filename: 'UserFileService.java',
         lang: 'java',

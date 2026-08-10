@@ -2,7 +2,7 @@
  * js/data/w5.js — Workshop 5: Cryptography & การปกป้องข้อมูล
  *
  * 4 โจทย์: weak-random-token, insecure-tls, sensitive-logging, weak-encryption
- * โครงสร้างตาม (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
+ * โครงสร้างข้อมูลของโจทย์ (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
  *
  * หมายเหตุสำหรับผู้ดูแลไฟล์นี้:
  * - โค้ดตัวอย่างอยู่ใน template literal ดังนั้น backtick, ${ และ backslash

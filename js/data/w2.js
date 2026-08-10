@@ -2,7 +2,7 @@
  * js/data/w2.js — Workshop 2: การจัดการ Secret & Configuration
  *
  * 3 โจทย์: hardcoded-secrets, cors-misconfig, verbose-errors
- * โครงสร้างตาม (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
+ * โครงสร้างข้อมูลของโจทย์ (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
  *
  * หมายเหตุสำหรับผู้ดูแลไฟล์นี้:
  * - โค้ดตัวอย่างอยู่ใน template literal ดังนั้น backtick, ${ และ backslash
@@ -959,38 +959,7 @@ module.exports = app;`,
       }
     },
 
-    pitfalls: [
-      {
-        title: {
-          th: 'ซ่อน stack trace แล้ว แต่ยังคืน e.getMessage()',
-          en: '"I hid the stack trace but still return e.getMessage()"'
-        },
-        why: {
-          th: 'stack trace เป็นแค่ส่วนหนึ่งของข้อมูลที่รั่ว ตัว message ของ exception เองก็มักพก detail ภายในมาด้วย เช่น ข้อความจาก JDBC/ORM ("ORA-00942: table or view does not exist", ชื่อ constraint ที่ละเมิด, เศษ SQL) หรือ path ของไฟล์ ซึ่งบอก schema, ชนิด database และโครงสร้างภายในให้ attacker ใช้วางแผนต่อ การซ่อน stack แต่ยังส่ง message จึงยังรั่วอยู่ดี ให้ log ทั้ง message และ stack ไว้ฝั่ง server แล้วคืนเฉพาะ generic message กับ trace id',
-          en: 'The stack trace is only part of what leaks. The exception message itself usually carries internal detail — text from JDBC/ORM ("ORA-00942: table or view does not exist", a violated constraint name, a fragment of SQL) or a file path — revealing your schema, database type, and internal structure for an attacker to plan around. Hiding the stack but still returning the message still leaks. Log both message and stack server-side and return only a generic message plus a trace id.'
-        },
-        short: {
-          th: 'ตัว message ของ exception ก็รั่ว schema และ path — ซ่อนแค่ stack ไม่พอ',
-          en: 'The exception message leaks schema and paths too — hiding the stack is not enough.'
-        }
-      },
-      {
-        title: {
-          th: 'ปิด error detail ใน response แล้ว แต่ /actuator ยังเปิดใน prod',
-          en: '"I turned off error detail in responses, but /actuator is still open in prod"'
-        },
-        why: {
-          th: 'ต่อให้ response สะอาดแล้ว ช่องรั่วอื่นยังมีอีก endpoint สำหรับ monitoring/debug อย่าง /actuator ของ Spring Boot (โดยเฉพาะ /actuator/env, /actuator/heapdump, /actuator/mappings), หน้า error แบบ verbose หรือโหมด debug ของ framework (server.error.include-stacktrace=always, Django DEBUG=True) ถ้าเปิดค้างใน prod จะเผย environment variable (ซึ่งอาจมีความลับ), stack trace และโครงสร้างภายในให้ใครก็ได้ที่เรียกถึง ต้องปิดหรือจำกัด permission ให้เข้าได้เฉพาะภายใน และตั้ง production profile ให้ไม่แสดง detail',
-          en: 'Even with a clean response, other leaks remain. Monitoring/debug endpoints like Spring Boot\'s /actuator (especially /actuator/env, /actuator/heapdump, /actuator/mappings), verbose error pages, or a framework debug mode (server.error.include-stacktrace=always, Django DEBUG=True) — left on in prod — expose environment variables (which may hold secrets), stack traces, and internal structure to anyone who can reach them. Disable them or restrict access to internal only, and set a production profile that shows no detail.'
-        },
-        short: {
-          th: '/actuator ที่เปิดใน prod เผย env และ heapdump แม้ response จะสะอาด',
-          en: 'An open /actuator in prod exposes env and heapdumps even with a clean response.'
-        }
-      }
-    ],
-
-    languages: {
+languages: {
       java: {
         filename: 'ApiExceptionHandler.java',
         lang: 'java',

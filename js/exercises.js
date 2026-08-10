@@ -2,7 +2,7 @@
  * js/exercises.js — the workshop REGISTRY
  *
  * This file must load FIRST among the data files (see the script order in
- * index.html, of the architecture doc). Exercise CONTENT lives in
+ * index.html). Exercise CONTENT lives in
  * js/data/w1.js … js/data/w6.js; each of those calls
  * SCW.registerWorkshop(...). In the browser, app.js calls SCW.finalize() at
  * init. Under Node, this file requires the data files itself, finalizes, and

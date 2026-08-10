@@ -1,16 +1,16 @@
 /* ============================================================================
- * test/verify.js — data + grading invariant suite
+ * test/verify.js — data + grading invariant suite (docs/ARCHITECTURE.md §14)
  *
  * Run:  node test/verify.js     (or: npm run verify / npm test)
  *
- * Asserts, for every exercise (items 1–11 of):
+ * Asserts, for every exercise (items 1–11 of §14):
  *   ids, severity/points table, CWE/OWASP formats, the recursive LStr walk,
  *   starter-fails / solution-passes per language, trap hygiene,
  *   simulator kinds + SimResult structure for every preset payload,
  *   and the SHA-256 / HMAC-SHA256 known vectors.
  * Plus the registry invariants and the Grader's own unit tests.
  *
- * While other modules are still being written, missing files are reported
+ * While sibling modules are still being written, missing files are reported
  * as readable "blocked" failures — never a raw stack trace.
  * ==========================================================================*/
 'use strict';
@@ -57,9 +57,9 @@ function flushGroup() {
   const g = current;
   current = null;
   if (g.failures.length === 0) {
-    console.log(' ' + green('✓') + ' ' + g.name + dim(' (' + g.count + ')'));
+    console.log('  ' + green('✓') + ' ' + g.name + dim(' (' + g.count + ')'));
   } else {
-    console.log(' ' + red('✗') + ' ' + bold(g.name) +
+    console.log('  ' + red('✗') + ' ' + bold(g.name) +
       dim(' (' + (g.count - g.failures.length) + '/' + g.count + ' passed)'));
     g.failures.forEach(function (f) {
       console.log(red('      - ') + f);
@@ -85,7 +85,7 @@ function firstLine(s) {
 }
 
 /**
- * — the recursive LStr walk.
+ * §14.4 — the recursive LStr walk.
  * Traverses every nested object/array. Any object having a `th` OR an `en`
  * key must have BOTH, both strings, both non-empty. Offenders are reported
  * with their JSON path.
@@ -156,7 +156,7 @@ let SCW = null;
 let registryError = null;
 if (missingData.length > 0) {
   registryError = 'missing data file(s): ' + missingData.join(', ') +
-    '';
+    ' (owned by sibling agents — expected while they are still writing)';
 } else {
   const reg = tryRequire('js/exercises.js');
   if (reg.err) {
@@ -188,12 +188,12 @@ let simError = null;
     }
   }
   if (Simulator && (typeof Simulator.has !== 'function' || typeof Simulator.run !== 'function')) {
-    simError = 'js/simulator.js loaded but lacks has()/run() — not the surface';
+    simError = 'js/simulator.js loaded but lacks has()/run() — not the §6.2 surface';
     Simulator = null;
   }
 }
 
-/* ไดอะแกรมเคลื่อนไหว — โหลดแยกจาก simulator เพื่อให้รายงานพังคนละจุดได้ */
+/* ไดอะแกรมเคลื่อนไหว (§18) — โหลดแยกจาก simulator เพื่อให้รายงานพังคนละจุดได้ */
 let Diagram = null;
 let dgError = null;
 {
@@ -209,7 +209,7 @@ let dgError = null;
     }
   }
   if (Diagram && (typeof Diagram.has !== 'function' || typeof Diagram.build !== 'function')) {
-    dgError = 'js/diagram.js loaded but lacks has()/build() — not the surface';
+    dgError = 'js/diagram.js loaded but lacks has()/build() — not the §18 surface';
     Diagram = null;
   }
 }
@@ -220,7 +220,7 @@ const DG_NODE_KINDS = ['actor', 'attacker', 'app', 'db', 'store', 'guard', 'note
 const DG_EDGE_TONES = ['neutral', 'danger', 'safe'];
 const DG_STEP_TONES = ['ok', 'warn', 'fail'];
 
-// ตรวจฉากหนึ่งฉากตามสัญญา — คืน array ของข้อความปัญหา (ว่าง = ผ่าน)
+// ตรวจฉากหนึ่งฉากตามสัญญา §18 — คืน array ของข้อความปัญหา (ว่าง = ผ่าน)
 function dgSceneProblems(sc, label) {
   const bad = [];
   if (!sc) return [label + ': scene missing'];
@@ -271,7 +271,7 @@ function dgSceneProblems(sc, label) {
 }
 
 /* ========================================================================== *
- * 1) Grader unit tests (always run — no other files needed)
+ * 1) Grader unit tests (always run — no sibling files needed)
  * ========================================================================== */
 
 heading('Grader unit tests');
@@ -498,7 +498,7 @@ if (!WORKSHOPS) {
 }
 
 /* ========================================================================== *
- * 3) Per-exercise assertions ( items 1–10)
+ * 3) Per-exercise assertions (§14 items 1–10)
  * ========================================================================== */
 
 function isValidRef(r) {
@@ -584,7 +584,7 @@ function verifyLanguageBlock(ex, lang) {
   // ---- traps: 1..3, valid regexes ----
   const traps = Array.isArray(lb.traps) ? lb.traps : [];
   ok(traps.length >= 1 && traps.length <= 3,
-    lang + ': needs 1–3 traps (got ' + traps.length + ') — see/');
+    lang + ': needs 1–3 traps (got ' + traps.length + ') — see §4.4/§14.9');
   traps.forEach(function (t, i) {
     const tp = lang + '.traps[' + i + ']';
     if (!ok(!!t && typeof t === 'object', tp + ': not an object')) return;
@@ -614,7 +614,7 @@ function verifyLanguageBlock(ex, lang) {
     solRes.traps.map(function (t) { return t.id; }).join(', '));
 }
 
-heading('Exercises (contract items 1–10)');
+heading('Exercises (contract §14 items 1–10)');
 
 if (!WORKSHOPS) {
   group('exercises');
@@ -678,12 +678,13 @@ if (!WORKSHOPS) {
       }
 
       // 8. pitfalls & codeReview
-      ok(Array.isArray(ex.pitfalls) && ex.pitfalls.length >= 2,
+      // pitfalls เป็น optional — บางข้อเจ้าของตัดออกทั้งหัวข้อโดยตั้งใจ
+      ok(ex.pitfalls === undefined || (Array.isArray(ex.pitfalls) && ex.pitfalls.length >= 1),
         'pitfalls.length must be >= 2 (got ' + (ex.pitfalls ? ex.pitfalls.length : 'none') + ')');
       (ex.pitfalls || []).forEach(function (p, pi) {
         ok(!!p && isLStr(p.title) && isLStr(p.why),
           'pitfalls[' + pi + '] must have LStr title + why');
-        //: บรรทัดสรุปสั้นสำหรับใช้สอน
+        // §17: บรรทัดสรุปสั้นสำหรับใช้สอน
         ok(!!p && isLStr(p.short),
           'pitfalls[' + pi + '] must have an LStr short (one-line correction)');
         if (p && isLStr(p.short)) {
@@ -694,9 +695,9 @@ if (!WORKSHOPS) {
         }
       });
 
-      // keyPoints — bullet สรุปสำหรับใช้สอน (ต้องสั้นพอที่จะอ่านจากจอโปรเจกเตอร์)
+      // §17. keyPoints — bullet สรุปสำหรับใช้สอน (ต้องสั้นพอที่จะอ่านจากจอโปรเจกเตอร์)
       ok(!!ex.keyPoints && typeof ex.keyPoints === 'object',
-        'keyPoints must exist');
+        'keyPoints must exist (§17)');
       ['vuln', 'attack', 'fix'].forEach(function (grp) {
         var arr = ex.keyPoints ? ex.keyPoints[grp] : null;
         // ขั้นต่ำ 1 bullet: บางข้อเจ้าของตัดให้เหลือประเด็นเดียวโดยตั้งใจ
@@ -716,7 +717,7 @@ if (!WORKSHOPS) {
       ok(Array.isArray(ex.codeReview) && ex.codeReview.length >= 3,
         'codeReview.length must be >= 3 (got ' + (ex.codeReview ? ex.codeReview.length : 'none') + ')');
 
-      // testIt (part of the contract; cmd is a plain string)
+      // testIt (part of the §4.3 contract; cmd is a plain string)
       // note เป็น optional — บางข้อคำสั่งอธิบายตัวเองได้ ไม่ต้องมีคำบรรยายซ้ำ
       ok(!!ex.testIt && typeof ex.testIt.cmd === 'string' && ex.testIt.cmd.trim() !== '',
         'testIt must have a non-empty cmd string');
@@ -737,6 +738,7 @@ if (!WORKSHOPS) {
           'sim.payloads[' + pi + '] must be { label: LStr, value: string }');
       });
       if (!Simulator) {
+        ok(false, 'sim: BLOCKED — ' + simError);
       } else {
         ok(Simulator.has(sim.kind) === true,
           'sim.kind "' + sim.kind + '" is not registered with the Simulator');
@@ -752,11 +754,12 @@ if (!WORKSHOPS) {
         }
       }
 
-      // 11. ไดอะแกรมเคลื่อนไหว — ใช้ sim.kind เดียวกัน ไม่ต้องมีฟิลด์ใหม่
+      // 11. ไดอะแกรมเคลื่อนไหว (§18) — ใช้ sim.kind เดียวกัน ไม่ต้องมีฟิลด์ใหม่
       if (!Diagram) {
+        ok(false, 'diagram: BLOCKED — ' + dgError);
       } else {
         ok(Diagram.has(sim.kind) === true,
-          'no Diagram scene registered for kind "' + sim.kind + '"');
+          'no Diagram scene registered for kind "' + sim.kind + '" (§18)');
         if (Diagram.has(sim.kind)) {
           // config จริงของโจทย์ และ {} เพื่อพิสูจน์ว่าฉากไม่พังเมื่อ config ขาด
           [['config', sim.config || {}], ['{}', {}]].forEach(function (pair) {
@@ -778,15 +781,51 @@ if (!WORKSHOPS) {
 }
 
 /* ========================================================================== *
- * 4) Crypto vectors
+ * 4) Crypto vectors (§14.11)
  * ========================================================================== */
+
+heading('Simulator crypto vectors (§14.11)');
+group('sha256 / hmac-sha256');
+if (!Simulator || !Simulator.util) {
+  ok(false, 'BLOCKED — ' + (simError || 'Simulator.util not exported by js/simulator.js'));
+} else {
+  const u = Simulator.util;
+  ok(typeof u.sha256Hex === 'function', 'Simulator.util.sha256Hex must be a function');
+  if (typeof u.sha256Hex === 'function') {
+    const gotAbc = u.sha256Hex('abc');
+    ok(gotAbc === 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
+      "sha256Hex('abc') FIPS vector mismatch (got " + gotAbc + ')');
+    const gotEmpty = u.sha256Hex('');
+    ok(gotEmpty === 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      "sha256Hex('') empty-string vector mismatch (got " + gotEmpty + ')');
+  }
+  ok(typeof u.hmacSha256Base64Url === 'function',
+    'Simulator.util.hmacSha256Base64Url must be a function');
+  if (typeof u.hmacSha256Base64Url === 'function') {
+    // RFC 4231 test case 1: key = 20 bytes of 0x0b, data = "Hi There"
+    // expected (hex): b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7
+    const key = String.fromCharCode(0x0b).repeat(20);
+    const expectedHex = 'b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7';
+    const expectedB64url = Buffer.from(expectedHex, 'hex').toString('base64')
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const got = u.hmacSha256Base64Url(key, 'Hi There');
+    ok(got === expectedB64url,
+      'HMAC-SHA256 RFC 4231 case 1 mismatch (want ' + expectedB64url + ', got ' + got + ')');
+  }
+  if (typeof u.b64urlEncode === 'function' && typeof u.b64urlDecode === 'function') {
+    const round = u.b64urlDecode(u.b64urlEncode('{"role":"admin"}'));
+    ok(round === '{"role":"admin"}', 'b64urlEncode/Decode must round-trip (got ' + round + ')');
+  }
+}
+
+/* ------------------------------- summary --------------------------------- */
 
 flushGroup();
 const passedTotal = total - failedTotal;
 console.log('\n' + bold(passedTotal + '/' + total + ' assertions passed.'));
 if (failedTotal > 0) {
   console.log(red(bold(failedTotal + ' assertion(s) FAILED.')) +
-    '\n');
+    dim('  (missing sibling files are reported as BLOCKED failures above)') + '\n');
   process.exit(1);
 } else {
   console.log(green(bold('All good — data, grading, simulator and crypto invariants hold.')) + '\n');

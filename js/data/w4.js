@@ -2,7 +2,7 @@
  * js/data/w4.js — Workshop 4: Dependency, ไฟล์อัปโหลด & Server-Side Request
  *
  * 4 โจทย์: file-upload, vulnerable-deps, ssrf, insecure-deserialization
- * โครงสร้างตาม (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
+ * โครงสร้างข้อมูลของโจทย์ (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
  *
  * หมายเหตุสำหรับผู้ดูแลไฟล์นี้:
  * - โค้ดตัวอย่างอยู่ใน template literal ดังนั้น backtick, ${ และ backslash

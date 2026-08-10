@@ -12,7 +12,7 @@
  *   - per-exercise XP never drops below 0; XP is rounded to whole numbers
  *
  * Zero dependencies. Works from file:// and under require() in Node.
- * See,,,.
+ * See,,,
  */
 (function (global) {
   'use strict';

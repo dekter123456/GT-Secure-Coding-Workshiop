@@ -2,7 +2,7 @@
  * js/data/w1.js — Workshop 1: Injection & การตรวจสอบ Input
  *
  * 4 โจทย์: sql-injection, xss, command-injection, path-traversal
- * โครงสร้างตาม (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
+ * โครงสร้างตาม docs/ARCHITECTURE.md §4 (ทุกข้อความที่ผู้เรียนเห็นเป็น { th, en })
  *
  * หมายเหตุสำหรับผู้ดูแลไฟล์นี้:
  * - โค้ดตัวอย่างอยู่ใน template literal ดังนั้น backtick, ${ และ backslash
@@ -580,20 +580,6 @@ module.exports = { findByUsername };`,
           th: 'encodeURIComponent ไม่ encode \' ให้ใช้ HTML attribute encoding แทน',
           en: 'encodeURIComponent leaves \' intact; use HTML attribute encoding instead.'
         }
-      },
-      {
-        title: {
-          th: 'ตั้ง CSP แล้วข้ามการ encode ตอนแสดงผล',
-          en: '"We ship a Content-Security-Policy, so we do not need to encode"'
-        },
-        why: {
-          th: 'CSP คือ defence in depth ไม่ใช่ตัวแทนของ output encoding หลาย policy ยังมี \'unsafe-inline\' อยู่เพราะแอปจำเป็นต้องใช้ inline script และต่อให้ไม่มี attacker ก็ยังทำ dangling markup injection ดูดข้อมูลในฟอร์มออกไปได้ หรือแทรก HTML หลอกผู้ใช้ (phishing form) โดยไม่ต้องรัน JavaScript สักบรรทัด ใช้ CSP เป็นชั้นที่สอง หลัง encode ถูกต้องแล้ว',
-          en: 'CSP is defence in depth, not a replacement for output encoding. Plenty of real policies still carry \'unsafe-inline\' because the app needs inline scripts, and even without it an attacker can use dangling-markup injection to exfiltrate form contents, or inject convincing phishing HTML that never runs a line of JavaScript. Use CSP as the second layer, after you encode correctly.'
-        },
-        short: {
-          th: 'CSP เป็นชั้นที่สอง ไม่ใช่ตัวแทนของ output encoding',
-          en: 'CSP is a second layer, not a replacement for output encoding.'
-        }
       }
     ],
 
@@ -1000,7 +986,7 @@ module.exports = app;`,
           en: 'The shell has plenty of separators and expansions you did not block: a newline (\\n) behaves exactly like ;, | and || chain commands, backticks `id` and $(id) do command substitution, ${IFS} substitutes for a space, > and >> overwrite files (a crontab, for instance), and a single & backgrounds a command. This is a denylist that must be right every time against an attacker who needs to be right once. Break the loop by removing the shell instead.'
         },
         short: {
-          th: 'ยังเหลือ newline | backtick $() ${IFS} > & — denylist ไม่สามารถครบ',
+          th: 'ยังเหลือ newline | backtick $() ${IFS} > &',
           en: 'Newline, |, backticks, $(), ${IFS}, > and & remain — no denylist is complete.'
         }
       },

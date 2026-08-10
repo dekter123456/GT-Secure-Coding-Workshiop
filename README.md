@@ -39,12 +39,11 @@ macOS / Linux ใช้ `./start.sh` · Windows ใช้ `start.bat` ก็ไ�
 | 8 | W3 | `weak-hashing` | Weak Password Hashing (MD5) | High | CWE-916 | A02:2021 – Cryptographic Failures |
 | 9 | W3 | `idor` | Insecure Direct Object Reference (IDOR) | High | CWE-639 | A01:2021 – Broken Access Control |
 | 10 | W3 | `jwt-forgery` | JWT Forgery (unverified signature) | Critical | CWE-347 | A01:2021 – Broken Access Control |
-| 11 | W4 | `file-upload` | Insecure File Upload | Critical | CWE-434 | A04:2021 – Insecure Design |
-| 12 | W4 | `vulnerable-deps` | Vulnerable & Outdated Components | High | CWE-1104 | A06:2021 – Vulnerable and Outdated Components |
-| 13 | W4 | `ssrf` | Server-Side Request Forgery (SSRF) | Critical | CWE-918 | A10:2021 – Server-Side Request Forgery (SSRF) |
-| 14 | W5 | `sensitive-logging` | Sensitive Data in Logs | Medium | CWE-532 | A09:2021 – Security Logging and Monitoring Failures |
-| 15 | W6 | `csrf` | Cross-Site Request Forgery (CSRF) | High | CWE-352 | A01:2021 – Broken Access Control |
-| 16 | W6 | `rate-limit` | Login Rate Limiting (Brute-force / Credential Stuffing) | Medium | CWE-307 | A07:2021 – Identification and Authentication Failures |
+| 11 | W4 | `vulnerable-deps` | Vulnerable & Outdated Components | High | CWE-1104 | A06:2021 – Vulnerable and Outdated Components |
+| 12 | W4 | `ssrf` | Server-Side Request Forgery (SSRF) | Critical | CWE-918 | A10:2021 – Server-Side Request Forgery (SSRF) |
+| 13 | W5 | `sensitive-logging` | Sensitive Data in Logs | Medium | CWE-532 | A09:2021 – Security Logging and Monitoring Failures |
+| 14 | W6 | `csrf` | Cross-Site Request Forgery (CSRF) | High | CWE-352 | A01:2021 – Broken Access Control |
+| 15 | W6 | `rate-limit` | Login Rate Limiting (Brute-force / Credential Stuffing) | Medium | CWE-307 | A07:2021 – Identification and Authentication Failures |
 
 ## โครงสร้างไฟล์
 

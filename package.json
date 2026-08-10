@@ -1,0 +1,27 @@
+{
+  "name": "gt-secure-coding-workshop",
+  "version": "1.0.0",
+  "description": "Offline, zero-dependency Secure Coding training workshop (Thai/English, Java & Node.js): read the vulnerability, fix the code, get graded in the browser.",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "node server.js",
+    "test": "node test/verify.js && node test/smoke.js",
+    "verify": "node test/verify.js",
+    "smoke": "node test/smoke.js"
+  },
+  "keywords": [
+    "security",
+    "secure-coding",
+    "training",
+    "owasp",
+    "workshop"
+  ],
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}
